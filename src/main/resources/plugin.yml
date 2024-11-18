@@ -1,0 +1,22 @@
+main: com.bolt.devroom.MarketPlugin
+name: DevroomMarket
+version: 1.0.0
+api-version: 1.20
+authors: [bolt4dev]
+commands:
+  sell:
+    description: Main warp command
+    usage: |
+      /<command>
+  market:
+    description: Main warpd command
+    usage: |
+      /<command>
+  blackmarket:
+    description: Admin warp command
+    usage: |
+      /<command>
+  transactions:
+    description: Admin warpd command
+    usage: |
+      /<command> 
