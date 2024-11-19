@@ -20,17 +20,19 @@ import java.util.UUID;
 
 public class MongoMarketDatabase implements MarketDatabase {
     private final String connectionString;
+    private final String databaseName;
 
 
-    public MongoMarketDatabase(String connectionString) {
+    public MongoMarketDatabase(String connectionString, String databaseName) {
         this.connectionString = connectionString;
+        this.databaseName = databaseName;
     }
 
     @Override
     public void saveMarketItems(List<MarketItem> items) throws IOException {
         MongoClient mongoClient = MongoClients.create(connectionString);
 
-            MongoDatabase database = mongoClient.getDatabase("market");
+            MongoDatabase database = mongoClient.getDatabase(databaseName);
             MongoCollection<Document> collection = database.getCollection("items");
 
             for (MarketItem item : items) {
@@ -56,7 +58,7 @@ public class MongoMarketDatabase implements MarketDatabase {
 public List<MarketItem> loadMarketItems() throws IOException, ClassNotFoundException {
     List<MarketItem> items = new ArrayList<>();
     MongoClient mongoClient = MongoClients.create(connectionString);
-        MongoDatabase database = mongoClient.getDatabase("market");
+        MongoDatabase database = mongoClient.getDatabase(databaseName);
         MongoCollection<Document> collection = database.getCollection("items");
         Bson projectionFields = Projections.fields(
                 Projections.include("item", "owner", "price", "_id")
@@ -81,7 +83,7 @@ public List<MarketItem> loadMarketItems() throws IOException, ClassNotFoundExcep
         List<MarketTransaction> transactions = new ArrayList<>();
         MongoClient mongoClient = MongoClients.create(connectionString);
 
-            MongoDatabase database = mongoClient.getDatabase("market");
+            MongoDatabase database = mongoClient.getDatabase(databaseName);
             MongoCollection<Document> collection = database.getCollection("transactions");
             Document query = new Document();
             // check if seller or buyer is the user
@@ -109,7 +111,7 @@ public List<MarketItem> loadMarketItems() throws IOException, ClassNotFoundExcep
     public void saveMarketTransaction(MarketTransaction transaction) {
         MongoClient mongoClient = MongoClients.create(connectionString);
 
-            MongoDatabase database = mongoClient.getDatabase("market");
+            MongoDatabase database = mongoClient.getDatabase(databaseName);
             MongoCollection<Document> collection = database.getCollection("transactions");
             Document document = new Document();
             document.append("seller", transaction.seller());

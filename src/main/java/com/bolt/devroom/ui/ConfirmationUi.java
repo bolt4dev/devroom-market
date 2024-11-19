@@ -23,9 +23,19 @@ public class ConfirmationUi {
 
         gui.setItem(3, 1, ItemBuilder.from(Material.GREEN_WOOL).name(MiniMessage.miniMessage().deserialize("<bold><white>Confirm")).asGuiItem(event -> {
             MarketHandler.buyItemFromMarket(item, player, blackMarket);
-            gui.close(player);
+            if (blackMarket) {
+                BlackMarketUi.openToPlayer(player);
+            } else {
+                MarketUi.openToPlayer(player);
+            }
         }));
-        gui.setItem(3, 9, ItemBuilder.from(Material.BARRIER).name(MiniMessage.miniMessage().deserialize("<bold><white>Cancel")).asGuiItem(event -> gui.close(player)));
+        gui.setItem(3, 9, ItemBuilder.from(Material.BARRIER).name(MiniMessage.miniMessage().deserialize("<bold><white>Cancel")).asGuiItem(event -> {
+            if (blackMarket) {
+                BlackMarketUi.openToPlayer(player);
+            } else {
+                MarketUi.openToPlayer(player);
+            }
+        }));
 
         gui.setItem(4, 5, ItemBuilder.from(item.item())
                 .asGuiItem());

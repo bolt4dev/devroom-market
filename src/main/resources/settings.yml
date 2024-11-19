@@ -1,0 +1,19 @@
+settings:
+  min-price: 0
+  database:
+    connection-string: "mongodb://localhost:32769"
+    name: "market"
+
+messages:
+  no-permission: "<red><bold>You don't have permission to do that.</bold></red>"
+  item-not-found: "<red><bold>You can't sell air.</bold></red>"
+  invalid-price: "<red><bold>Price can't be lower than <white><min-price>"
+  item-listed: "<white><bold><item-name></bold> <green>listed for <white><bold><price></bold> <green>coins."
+  inventory-full: "<red><bold>Your inventory is full.</bold></red>"
+  not-enough-money: "<red><bold> You don't have enough money.</bold></red> <yellow><balance><gray>/<white><price>"
+  item-sold: "<green><bold><item-name></bold> <green>sold for <white><bold><price></bold> <green>coins."
+  item-bought: "<green><bold><item-name></bold> <green>bought for <white><bold><price></bold> <green>coins."
+  no-transactions: "<red><bold>You don't have any transactions.</bold></red>"
+  transactions-header: "<white><bold>Transactions:</bold></white>"
+  you-bought: "<green><bold>You bought <white><item-name></bold> <green>for <white><price></bold> <green>coins."
+  you-sold: "<green><bold>You sold <white><item-name></bold> <green>for <white><price></bold> <green>coins."

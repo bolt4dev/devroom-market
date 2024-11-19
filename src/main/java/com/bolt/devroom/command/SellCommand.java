@@ -12,13 +12,16 @@ public class SellCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         Player player = (Player) commandSender;
+        if (!player.hasPermission("marketplace.sell")) {
+            player.sendMessage("§cYou do not have permission to use this command.");
+            return false;
+        }
 
         if (strings.length > 0) {
             String costString = String.join(" ", strings);
             int cost = Integer.parseInt(costString);
 
             MarketHandler.sellItemOnMarket(player.getInventory().getItemInMainHand(), player, cost);
-            player.sendMessage("Item has been put on the market for " + cost + " coins.");
         }
 
         return true;
