@@ -1,8 +1,16 @@
 settings:
   min-price: 0
+  auto-save-interval: 5 # 0 to disable
   database:
     connection-string: "mongodb://localhost:32769"
     name: "market"
+  webhook:
+    enabled: false
+    url: " "
+    username: "Market"
+    avatar-url: " "
+    title: "<player> bought <item> for <price> coins."
+    description: "Stay tuned for more transactions."
 
 messages:
   no-permission: "<red><bold>You don't have permission to do that.</bold></red>"

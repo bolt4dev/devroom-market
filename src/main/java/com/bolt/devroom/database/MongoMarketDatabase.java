@@ -51,32 +51,40 @@ public class MongoMarketDatabase implements MarketDatabase {
                 collection.updateOne(query, updates, options);
             }
 
+            // delete items that are not in the list
+            List<ObjectId> itemIds = new ArrayList<>();
+            for (MarketItem item : items) {
+                itemIds.add(new ObjectId(item.id()));
+            }
+            Bson deleteQuery = new Document("_id", new Document("$nin", itemIds));
+            collection.deleteMany(deleteQuery);
+
         mongoClient.close();
     }
 
-@Override
-public List<MarketItem> loadMarketItems() throws IOException, ClassNotFoundException {
-    List<MarketItem> items = new ArrayList<>();
-    MongoClient mongoClient = MongoClients.create(connectionString);
-        MongoDatabase database = mongoClient.getDatabase(databaseName);
-        MongoCollection<Document> collection = database.getCollection("items");
-        Bson projectionFields = Projections.fields(
-                Projections.include("item", "owner", "price", "_id")
-        );
+    @Override
+    public List<MarketItem> loadMarketItems() throws IOException, ClassNotFoundException {
+        List<MarketItem> items = new ArrayList<>();
+        MongoClient mongoClient = MongoClients.create(connectionString);
+            MongoDatabase database = mongoClient.getDatabase(databaseName);
+            MongoCollection<Document> collection = database.getCollection("items");
+            Bson projectionFields = Projections.fields(
+                    Projections.include("item", "owner", "price", "_id")
+            );
 
-    for (Document document : collection.find().projection(projectionFields)) {
-        ByteArrayInputStream itemStream = new ByteArrayInputStream(document.get("item", Binary.class).getData());
-        MarketItem item = new MarketItem(
-                document.getObjectId("_id").toHexString(),
-                MarketSerializer.deserializeItem(itemStream),
-                UUID.fromString(document.getString("owner")),
-                document.getInteger("price")
-        );
-        items.add(item);
+        for (Document document : collection.find().projection(projectionFields)) {
+            ByteArrayInputStream itemStream = new ByteArrayInputStream(document.get("item", Binary.class).getData());
+            MarketItem item = new MarketItem(
+                    document.getObjectId("_id").toHexString(),
+                    MarketSerializer.deserializeItem(itemStream),
+                    UUID.fromString(document.getString("owner")),
+                    document.getInteger("price")
+            );
+            items.add(item);
+        }
+            mongoClient.close();
+        return items;
     }
-        mongoClient.close();
-    return items;
-}
 
     @Override
     public List<MarketTransaction> getMarketTransactions(UUID userId) {
@@ -86,7 +94,7 @@ public List<MarketItem> loadMarketItems() throws IOException, ClassNotFoundExcep
             MongoDatabase database = mongoClient.getDatabase(databaseName);
             MongoCollection<Document> collection = database.getCollection("transactions");
             Document query = new Document();
-            // check if seller or buyer is the user
+
             query.append("$or", List.of(
                     new Document("seller", userId.toString()),
                     new Document("buyer", userId.toString())
@@ -94,7 +102,7 @@ public List<MarketItem> loadMarketItems() throws IOException, ClassNotFoundExcep
 
             for (Document document : collection.find(query)) {
                 MarketTransaction transaction = new MarketTransaction(
-                        document.getInteger("cost"),
+                        document.getDouble("cost"),
                         document.getString("seller"),
                         document.getString("buyer"),
                         document.getString("item")

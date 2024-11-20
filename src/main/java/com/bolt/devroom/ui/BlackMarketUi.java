@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class BlackMarketUi {
 
@@ -40,14 +41,33 @@ public class BlackMarketUi {
 
 
         List<GuiItem> guiItems = new ArrayList<>();
-        for (MarketItem item : MarketHandler.getMarketItems()) {
-            guiItems.add(ItemBuilder.from(item.item())
-                    .asGuiItem(event -> {
-                        ConfirmationUi.openToPlayer(player, item, true);
-                    }));
-            i++;
-        }
+        List<MarketItem> marketItems = new ArrayList<>();
 
+        Random rand = new Random();
+
+        if (MarketHandler.getMarketItems().size() <= 2) {
+            for (MarketItem item : MarketHandler.getMarketItems()) {
+                guiItems.add(ItemBuilder.from(item.item())
+                        .asGuiItem(event -> {
+                            ConfirmationUi.openToPlayer(player, item, true);
+                        }));
+                i++;
+            }
+        } else {
+            for (int j = 0; j < 2; j++) {
+                int randomIndex = rand.nextInt(MarketHandler.getMarketItems().size());
+                MarketItem randomItem = MarketHandler.getMarketItems().get(randomIndex);
+                if (!marketItems.contains(randomItem)) {
+                    marketItems.add(randomItem);
+                    guiItems.add(ItemBuilder.from(randomItem.item())
+                            .asGuiItem(event -> {
+                                ConfirmationUi.openToPlayer(player, randomItem, true);
+                            }));
+                } else {
+                    j--;
+                }
+            }
+        }
 
         guiItems.forEach(gui::addItem);
 
@@ -57,7 +77,7 @@ public class BlackMarketUi {
 
 
     public static void openToPlayer(Player player) {
-        MarketUi ui = new MarketUi();
+        BlackMarketUi ui = new BlackMarketUi();
         ui.open(player);
     }
 }

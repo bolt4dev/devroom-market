@@ -8,7 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
 
-// TODO: Add discord webhook for transactions
+// TODO: This is the last todo, rework item serialization and deserialization
 
 public class MarketPlugin extends JavaPlugin {
     private static MarketPlugin instance;
@@ -32,6 +32,7 @@ public class MarketPlugin extends JavaPlugin {
             return;
         }
         MarketConfiguration.initialize(this);
+        WebHookHandler.initialize(MarketConfiguration.getSetting("webhook.url"));
         MarketHandler.initialize(new MongoMarketDatabase(MarketConfiguration.getSetting("database.connection-string"), MarketConfiguration.getSetting("database.name")));
         logger.info("Market plugin has been enabled.");
 
@@ -40,10 +41,13 @@ public class MarketPlugin extends JavaPlugin {
         this.getCommand("transactions").setExecutor(new TransactionsCommand());
         this.getCommand("sell").setExecutor(new SellCommand());
         this.getCommand("reloadMarket").setExecutor(new ReloadCommand());
+
+        if (Integer.parseInt(MarketConfiguration.getSetting("auto-save-interval")) > 0)
+            AutoSaveHandler.start();
     }
 
     @Override
     public void onDisable() {
-        MarketHandler.stop();
+        MarketHandler.save();
     }
 }

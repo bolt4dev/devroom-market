@@ -19,4 +19,8 @@ commands:
   transactions:
     description: Admin warpd command
     usage: |
-      /<command> 
+      /<command>
+  reloadMarket:
+    description: Admin warpd command
+    usage: |
+      /<command>

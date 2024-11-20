@@ -20,6 +20,7 @@ dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT'
     implementation "dev.triumphteam:triumph-gui:3.1.10"
     implementation 'org.mongodb:mongodb-driver-sync:5.2.0'
+    implementation 'io.github.4drian3d:jdwebhooks:1.1.0'
 }
 
 artifacts.archives(tasks.shadowJar)

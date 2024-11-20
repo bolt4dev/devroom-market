@@ -32,7 +32,7 @@ public class MarketHandler {
             marketItems.addAll(items);
     }
 
-    public static void stop() {
+    public static void save() {
         try {
             database.saveMarketItems(marketItems);
         } catch (IOException e) {
@@ -125,6 +125,8 @@ public class MarketHandler {
                 buyer.getUniqueId().toString(),
                 item.item().getItemMeta().getDisplayName()
         );
+
+        WebHookHandler.sendTransaction(transaction);
 
         database.saveMarketTransaction(transaction);
     }
