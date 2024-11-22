@@ -1,5 +1,6 @@
 settings:
   min-price: 0
+  blackmarket-cooldown: 10 # seconds
   auto-save-interval: 5 # 0 to disable
   database:
     connection-string: "mongodb://localhost:32769"
@@ -25,3 +26,4 @@ messages:
   transactions-header: "<white><bold>Transactions:</bold></white>"
   you-bought: "<green><bold>You bought <white><item-name></bold> <green>for <white><price></bold> <green>coins."
   you-sold: "<green><bold>You sold <white><item-name></bold> <green>for <white><price></bold> <green>coins."
+  blackmarket-cooldown: "<red><bold>Black market is on cooldown. Please wait <white><cooldown></bold> <red>seconds."

@@ -9,10 +9,9 @@ import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bson.types.Binary;
 import org.bson.types.ObjectId;
+import org.bukkit.inventory.ItemStack;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,20 +28,19 @@ public class MongoMarketDatabase implements MarketDatabase {
     }
 
     @Override
-    public void saveMarketItems(List<MarketItem> items) throws IOException {
+    public void saveMarketItems(List<MarketItem> items) {
         MongoClient mongoClient = MongoClients.create(connectionString);
-
             MongoDatabase database = mongoClient.getDatabase(databaseName);
             MongoCollection<Document> collection = database.getCollection("items");
 
             for (MarketItem item : items) {
 
-                ByteArrayInputStream serializedItem = MarketSerializer.serializeItem(item.item());
+                String serializedItem = MarketSerializer.serializeItem(item.item());
                 Document query = new Document();
                 ObjectId itemObjectId = new ObjectId(item.id());
                 query.append("_id", itemObjectId);
                 Bson updates = Updates.combine(
-                        Updates.set("item", serializedItem.readAllBytes()),
+                        Updates.set("item", serializedItem),
                         Updates.set("owner", item.owner().toString()),
                         Updates.set("price", item.price())
                 );
@@ -73,14 +71,17 @@ public class MongoMarketDatabase implements MarketDatabase {
             );
 
         for (Document document : collection.find().projection(projectionFields)) {
-            ByteArrayInputStream itemStream = new ByteArrayInputStream(document.get("item", Binary.class).getData());
-            MarketItem item = new MarketItem(
+            ItemStack item = MarketSerializer.deserializeItem(document.getString("item"));
+            if (item == null) {
+                continue;
+            }
+            MarketItem marketItem = new MarketItem(
                     document.getObjectId("_id").toHexString(),
-                    MarketSerializer.deserializeItem(itemStream),
+                    item,
                     UUID.fromString(document.getString("owner")),
                     document.getInteger("price")
             );
-            items.add(item);
+            items.add(marketItem);
         }
             mongoClient.close();
         return items;

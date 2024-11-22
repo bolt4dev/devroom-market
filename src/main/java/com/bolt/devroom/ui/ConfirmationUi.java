@@ -13,28 +13,19 @@ public class ConfirmationUi {
     public ConfirmationUi() {}
 
     public void open(Player player, MarketItem item, boolean blackMarket) {
-        int i = 0;
-
         Gui gui = Gui.gui()
                 .title(MiniMessage.miniMessage().deserialize("<bold><white>Are you sure?"))
                 .rows(6)
                 .disableAllInteractions()
                 .create();
 
-        gui.setItem(3, 1, ItemBuilder.from(Material.GREEN_WOOL).name(MiniMessage.miniMessage().deserialize("<bold><white>Confirm")).asGuiItem(event -> {
+        gui.setItem(3, 1, ItemBuilder.from(Material.GREEN_WOOL).name(MiniMessage.miniMessage().deserialize("<bold><white>Confirm - Price: " + item.price())).asGuiItem(event -> {
             MarketHandler.buyItemFromMarket(item, player, blackMarket);
-            if (blackMarket) {
-                BlackMarketUi.openToPlayer(player);
-            } else {
                 MarketUi.openToPlayer(player);
-            }
+
         }));
         gui.setItem(3, 9, ItemBuilder.from(Material.BARRIER).name(MiniMessage.miniMessage().deserialize("<bold><white>Cancel")).asGuiItem(event -> {
-            if (blackMarket) {
-                BlackMarketUi.openToPlayer(player);
-            } else {
                 MarketUi.openToPlayer(player);
-            }
         }));
 
         gui.setItem(4, 5, ItemBuilder.from(item.item())

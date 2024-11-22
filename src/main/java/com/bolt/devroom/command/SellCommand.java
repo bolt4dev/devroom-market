@@ -14,7 +14,7 @@ public class SellCommand implements CommandExecutor {
         Player player = (Player) commandSender;
         if (!player.hasPermission("marketplace.sell")) {
             player.sendMessage("§cYou do not have permission to use this command.");
-            return false;
+            return true;
         }
 
         if (strings.length > 0) {

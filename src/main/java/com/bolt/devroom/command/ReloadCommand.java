@@ -1,7 +1,6 @@
 package com.bolt.devroom.command;
 
 import com.bolt.devroom.configuration.MarketConfiguration;
-import com.bolt.devroom.ui.MarketUi;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,7 +13,7 @@ public class ReloadCommand implements CommandExecutor {
         Player player = (Player) commandSender;
         if (!player.hasPermission("marketplace.reload")) {
             player.sendMessage("§cYou do not have permission to use this command.");
-            return false;
+            return true;
         }
 
         MarketConfiguration.reload();

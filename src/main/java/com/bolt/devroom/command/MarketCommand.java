@@ -13,7 +13,7 @@ public class MarketCommand implements CommandExecutor {
         Player player = (Player) commandSender;
         if (!player.hasPermission("marketplace.view")) {
             player.sendMessage("§cYou do not have permission to use this command.");
-            return false;
+            return true;
         }
 
         MarketUi.openToPlayer(player);

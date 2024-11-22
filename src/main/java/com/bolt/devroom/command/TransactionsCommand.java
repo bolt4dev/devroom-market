@@ -15,7 +15,7 @@ public class TransactionsCommand implements CommandExecutor {
         Player player = (Player) commandSender;
         if (!player.hasPermission("marketplace.history")) {
             player.sendMessage("§cYou do not have permission to use this command.");
-            return false;
+            return true;
         }
         MarketHandler.listPlayerTransactions(player);
     return true;

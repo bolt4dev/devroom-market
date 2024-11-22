@@ -8,8 +8,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
 
-// TODO: This is the last todo, rework item serialization and deserialization
-
 public class MarketPlugin extends JavaPlugin {
     private static MarketPlugin instance;
 
@@ -32,7 +30,8 @@ public class MarketPlugin extends JavaPlugin {
             return;
         }
         MarketConfiguration.initialize(this);
-        WebHookHandler.initialize(MarketConfiguration.getSetting("webhook.url"));
+        if (MarketConfiguration.getSetting("webhook.enabled").equalsIgnoreCase("true"))
+            WebHookHandler.initialize(MarketConfiguration.getSetting("webhook.url"));
         MarketHandler.initialize(new MongoMarketDatabase(MarketConfiguration.getSetting("database.connection-string"), MarketConfiguration.getSetting("database.name")));
         logger.info("Market plugin has been enabled.");
 

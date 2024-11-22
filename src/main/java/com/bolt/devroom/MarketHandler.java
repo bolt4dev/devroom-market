@@ -13,8 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class MarketHandler {
     private static final List<MarketItem> marketItems = new ArrayList<>();
@@ -96,13 +95,13 @@ public class MarketHandler {
 
         OfflinePlayer ownerPlayer = buyer.getServer().getOfflinePlayer(item.owner());
 
+        double lastPrice = item.price();
+
         if (blackMarket) {
-            VaultHook.getEconomy().withdrawPlayer(buyer, (double) item.price() /2);
-        } else {
-            VaultHook.getEconomy().withdrawPlayer(buyer, item.price());
+            lastPrice = (double) item.price() / 2;
         }
 
-
+        VaultHook.getEconomy().withdrawPlayer(buyer, lastPrice);
         VaultHook.getEconomy().depositPlayer(ownerPlayer, item.price());
 
         if (ownerPlayer.isOnline()) {
@@ -116,14 +115,14 @@ public class MarketHandler {
         buyer.getInventory().addItem(item.item());
         marketItems.remove(item);
         buyer.sendMessage(MiniMessage.miniMessage().deserialize(MarketConfiguration.getMessage("item-bought"),
-                Placeholder.unparsed("price", String.valueOf(item.price())),
+                Placeholder.unparsed("price", String.valueOf(lastPrice)),
                 Placeholder.unparsed("item-name", item.item().getItemMeta().getDisplayName())));
 
         MarketTransaction transaction = new MarketTransaction(
                 item.price(),
                 item.owner().toString(),
                 buyer.getUniqueId().toString(),
-                item.item().getItemMeta().getDisplayName()
+                item.item().displayName().examinableName()
         );
 
         WebHookHandler.sendTransaction(transaction);
