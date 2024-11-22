@@ -24,6 +24,6 @@ messages:
   item-bought: "<green><bold><item-name></bold> <green>bought for <white><bold><price></bold> <green>coins."
   no-transactions: "<red><bold>You don't have any transactions.</bold></red>"
   transactions-header: "<white><bold>Transactions:</bold></white>"
-  you-bought: "<green><bold>You bought <white><item-name></bold> <green>for <white><price></bold> <green>coins."
-  you-sold: "<green><bold>You sold <white><item-name></bold> <green>for <white><price></bold> <green>coins."
+  you-bought: "<green><bold>You bought <white><item-name> <green>for <white><price></bold> <green>coins."
+  you-sold: "<green><bold>You sold <white><item-name> <green>for</bold> <white><price> <green>coins."
   blackmarket-cooldown: "<red><bold>Black market is on cooldown. Please wait <white><cooldown></bold> <red>seconds."

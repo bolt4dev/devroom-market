@@ -67,9 +67,13 @@ public class MarketHandler {
 
         marketItems.add(marketItem);
         owner.getInventory().removeItem(item);
+        String itemName = item.getItemMeta().getDisplayName();
+        if (itemName.isEmpty())
+            itemName = item.getType().toString();
+
         owner.sendMessage(MiniMessage.miniMessage().deserialize(MarketConfiguration.getMessage("item-listed"),
                 Placeholder.unparsed("price", String.valueOf(price)),
-                Placeholder.unparsed("item-name", item.getItemMeta().getDisplayName())));
+                Placeholder.unparsed("item-name", itemName)));
     }
 
     public static void buyItemFromMarket(MarketItem item, Player buyer, boolean blackMarket) {
@@ -104,25 +108,29 @@ public class MarketHandler {
         VaultHook.getEconomy().withdrawPlayer(buyer, lastPrice);
         VaultHook.getEconomy().depositPlayer(ownerPlayer, item.price());
 
+        String itemName = item.item().getItemMeta().getDisplayName();
+        if (itemName.isEmpty())
+            itemName = item.item().getType().toString();
+
         if (ownerPlayer.isOnline()) {
             Player owner = ownerPlayer.getPlayer();
             if (owner != null)
                 owner.sendMessage(MiniMessage.miniMessage().deserialize(MarketConfiguration.getMessage("item-sold"),
                         Placeholder.unparsed("price", String.valueOf(item.price())),
-                        Placeholder.unparsed("item-name", item.item().getItemMeta().getDisplayName())));
+                        Placeholder.unparsed("item-name", itemName)));
         }
 
         buyer.getInventory().addItem(item.item());
         marketItems.remove(item);
         buyer.sendMessage(MiniMessage.miniMessage().deserialize(MarketConfiguration.getMessage("item-bought"),
                 Placeholder.unparsed("price", String.valueOf(lastPrice)),
-                Placeholder.unparsed("item-name", item.item().getItemMeta().getDisplayName())));
+                Placeholder.unparsed("item-name", itemName)));
 
         MarketTransaction transaction = new MarketTransaction(
                 item.price(),
                 item.owner().toString(),
                 buyer.getUniqueId().toString(),
-                item.item().displayName().examinableName()
+                itemName
         );
 
         WebHookHandler.sendTransaction(transaction);
@@ -143,12 +151,12 @@ public class MarketHandler {
             if (transaction.buyer().equals(player.getUniqueId().toString())) {
                 player.sendMessage(MiniMessage.miniMessage().deserialize(MarketConfiguration.getMessage("you-bought"),
                         Placeholder.unparsed("item-name", transaction.itemName()),
-                        Placeholder.unparsed("cost", String.valueOf(transaction.cost())),
+                        Placeholder.unparsed("price", String.valueOf(transaction.cost())),
                         Placeholder.unparsed("seller", transaction.seller())));
             } else {
                 player.sendMessage(MiniMessage.miniMessage().deserialize(MarketConfiguration.getMessage("you-sold"),
                         Placeholder.unparsed("item-name", transaction.itemName()),
-                        Placeholder.unparsed("cost", String.valueOf(transaction.cost())),
+                        Placeholder.unparsed("price", String.valueOf(transaction.cost())),
                         Placeholder.unparsed("buyer", transaction.buyer())));
             }
         });
